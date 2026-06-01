@@ -4,39 +4,30 @@
 
 // Leetcode:118:
 
-#include<iostream>
-using namespace std;
-#include<vector>
+class Solution {
+public:
+    vector<vector<int>> generate(int numRows) {
+        vector<vector<int>>triangle(numRows);
+        for(int i=0;i<numRows;i++){
+            triangle[i].resize(i+1);
+            triangle[i][0]=triangle[i][i]=1;
 
-vector<vector<int>> generate(int r) {
-    vector<vector<int>>v;
-        for(int i=0;i<r;i++){
-            vector<int>v1;
-            for(int j=0;j<=i;j++){
-                if(j==0 || j==i){
-                    v1.push_back(1);
-                    continue;
-                }
-                if(i>1){
-                    int sum=(v[i-1][j])+(v[i-1][j-1]);
-                    v1.push_back(sum);
-                }
+            for(int j=1;j<i;j++){
+                triangle[i][j]=triangle[i-1][j-1]+triangle[i-1][j];
             }
-            v.push_back(v1);
-        }
-    return v;
-}
 
-
-int main()
-{
-    int n = 5;
-    vector<vector<int>> ans = generate(n);
-    for (auto it : ans) {
-        for (auto ele : it) {
-            cout << ele << " ";
         }
-        cout<<endl;
+        return triangle;
+
     }
-    return 0;
-}
+};
+
+### Complexity Analysis
+
+- **Time Complexity:** `O(n²)`
+
+  The triangle contains `1 + 2 + 3 + ... + n = n(n + 1)/2` elements, and each element is computed once.
+
+- **Space Complexity:** `O(n²)`
+
+  The output stores `n(n + 1)/2` elements.
