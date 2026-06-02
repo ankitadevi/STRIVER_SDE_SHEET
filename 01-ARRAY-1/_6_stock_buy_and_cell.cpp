@@ -4,33 +4,19 @@
 
 //leetcode:121 link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
 
-#include<iostream>
-#include<vector>
-using namespace std;
-
 class Solution {
 public:
     int maxProfit(vector<int>& prices) {
-        int low=0;
-        int maxi=0;
-
-
-        for(int i=1;i<prices.size();i++){
-            int diff=prices[i]-prices[low];
-            maxi=max(diff,maxi);
-
-            if(prices[i]<prices[low]){
-                low=i;
-            }
+        int n=prices.size();
+        int buy=prices[0];
+        int profit=0;
+        for(int i=1;i<n;i++){
+            profit=max(profit,prices[i]-buy);
+            buy=min(buy,prices[i]);
         }
-        return maxi;
+        return profit;
     }
 };
 
-
-int main() {
-    vector<int> arr = {7,1,5,3,6,4};
-    Solution* a=new Solution();
-    int maxPro = a->maxProfit(arr);
-    cout << "Max profit is: " << maxPro << endl;
-}
+// tc:O(n)
+// sc:O(1)
