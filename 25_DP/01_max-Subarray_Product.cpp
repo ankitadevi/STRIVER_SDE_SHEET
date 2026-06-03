@@ -112,6 +112,7 @@ public:
 // SC: O(1)
 // ---------------------------------------------------------
 
+// I use this approach
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
