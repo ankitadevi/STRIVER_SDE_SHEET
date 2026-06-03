@@ -8,7 +8,7 @@
 #include<iostream>
 using namespace std;
 
-
+// Brute-Force Aapproach
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
