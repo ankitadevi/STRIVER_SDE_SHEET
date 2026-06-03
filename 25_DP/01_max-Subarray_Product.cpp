@@ -116,22 +116,18 @@ public:
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-
-        int n = nums.size();
-        int pre = 1, suf = 1;
-        int ans = INT_MIN;
-
-        for(int i = 0; i < n; i++) {
-
-            if(pre == 0) pre = 1;
-            if(suf == 0) suf = 1;
-
-            pre *= nums[i];
-            suf *= nums[n - i - 1];
-
-            ans = max(ans, max(pre, suf));
+        int ans=INT_MIN, prod=1;
+        for(int i=0;i<nums.size();i++){
+            prod=prod*nums[i];
+            ans=max(ans,prod);
+            if(prod==0) prod=1;
         }
-
+        prod=1;
+        for(int i=nums.size()-1;i>=0;i--){
+            prod=prod*nums[i];
+            ans=max(ans,prod);
+            if(prod==0) prod=1;
+        }
         return ans;
     }
 };
