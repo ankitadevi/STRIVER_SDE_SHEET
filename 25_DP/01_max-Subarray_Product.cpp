@@ -12,7 +12,7 @@ using namespace std;
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-        //O(n2)
+        //O(n2) tc, O(1) sc
         // int maxi=INT_MIN;
         // for(int i=0;i<nums.size();i++){
         //     int pro=1;
@@ -23,69 +23,114 @@ public:
         // }
         // return maxi;
 
-        //O(n)
-        //rte -when there are 3 negative numbers
-        // int n=nums.size();
-        // int arr[n];
-        // for(int i=n-1;i>=0;i--){
-        //     if(i==n-1)arr[i]=nums[i];
-        //     else{
-        //         arr[i]=(nums[i]*arr[i+1] > nums[i]?nums[i]*arr[i+1]:nums[i]);
-        //     }
-        // }
-        // int maxi=INT_MIN;
-        // for(int i=0;i<n;i++){
-        //     maxi=max(arr[i],maxi);
-        // }
-        // return maxi;
+// LeetCode 152: Maximum Product Subarray
 
+// ---------------------------------------------------------
+// 1. DP Solution (O(n) Time, O(n) Space)
+// State:
+// dpMax[i] = Maximum product subarray ending at i
+// dpMin[i] = Minimum product subarray ending at i
+//
+// TC: O(n)
+// SC: O(n)
+// ---------------------------------------------------------
 
-        //optimised Solution
-        // int n=nums.size();
-        // int res=INT_MIN;
-        // int suf=1;
-        // int pre=1;
-        // for(int i=0;i<n;i++){
-        //     if(pre==0)pre=1;
-        //     if(suf==0)suf=1;
-        //     pre*=nums[i];
-        //     suf*=nums[n-i-1];
-        //     res=max(res,max(pre,suf));
-        // }
-        // return res;
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n = nums.size();
 
-        // int n = nums.size();
-        // int minProduct = 1;
-        // int maxProduct = 1;
-        // int ans = INT_MIN;
-        // for(int i=0; i<n; i++){
-        //     if(nums[i] < 0){
-        //         swap(maxProduct, minProduct);
-        //     }
-        //     maxProduct = max(maxProduct*nums[i], nums[i]);
-        //     minProduct = min(minProduct*nums[i], nums[i]);
-        //     ans = max(ans, maxProduct);
-        // }
-        // return ans;
+        vector<int> dpMax(n);
+        vector<int> dpMin(n);
 
+        dpMax[0] = nums[0];
+        dpMin[0] = nums[0];
 
-    int prod=1,maxi=INT_MIN,n=nums.size();
+        int ans = nums[0];
 
-    for(int i=0;i<n;i++){
-        if(prod>= (1*pow(10,10)/10) && (nums[i]==10||nums[i]==-10))return (1*pow(10,9));
-        
-        if(prod==0)prod=1;
-        prod*=nums[i];
-        maxi=max(prod,maxi);
+        for(int i = 1; i < n; i++) {
+
+            dpMax[i] = max({
+                nums[i],
+                nums[i] * dpMax[i - 1],
+                nums[i] * dpMin[i - 1]
+            });
+
+            dpMin[i] = min({
+                nums[i],
+                nums[i] * dpMax[i - 1],
+                nums[i] * dpMin[i - 1]
+            });
+
+            ans = max(ans, dpMax[i]);
+        }
+
+        return ans;
     }
+};
 
-    prod=1;
-    for(int i=n-1;i>=0;i--){
-        if(prod==0)prod=1;
-        prod*=nums[i];
-        maxi=max(prod,maxi);
+// ---------------------------------------------------------
+// 2. Space Optimized DP (Official Optimal DP)
+// State Compression
+//
+// TC: O(n)
+// SC: O(1)
+// ---------------------------------------------------------
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+
+        int maxProd = nums[0];
+        int minProd = nums[0];
+        int ans = nums[0];
+
+        for(int i = 1; i < nums.size(); i++) {
+
+            if(nums[i] < 0)
+                swap(maxProd, minProd);
+
+            maxProd = max(nums[i], maxProd * nums[i]);
+            minProd = min(nums[i], minProd * nums[i]);
+
+            ans = max(ans, maxProd);
+        }
+
+        return ans;
     }
-    return maxi;
+};
 
+// ---------------------------------------------------------
+// 3. Prefix-Suffix Product Approach
+//
+// Idea:
+// - Traverse from left to right (prefix)
+// - Traverse from right to left (suffix)
+// - Reset product when it becomes 0
+//
+// TC: O(n)
+// SC: O(1)
+// ---------------------------------------------------------
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+
+        int n = nums.size();
+        int pre = 1, suf = 1;
+        int ans = INT_MIN;
+
+        for(int i = 0; i < n; i++) {
+
+            if(pre == 0) pre = 1;
+            if(suf == 0) suf = 1;
+
+            pre *= nums[i];
+            suf *= nums[n - i - 1];
+
+            ans = max(ans, max(pre, suf));
+        }
+
+        return ans;
     }
 };
