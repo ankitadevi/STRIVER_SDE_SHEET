@@ -5,44 +5,85 @@
 
 //Leetcode: 300 link:https://leetcode.com/problems/longest-increasing-subsequence/description/
 
-#include<iostream>
-using namespace std;
+// Brute Force (Recursion)
+class Solution {
+public:
+    int solve(int ind, int prev, vector<int>& nums) {
+        if(ind == nums.size()) return 0;
 
+        int notTake = solve(ind + 1, prev, nums);
+
+        int take = 0;
+        if(prev == -1 || nums[ind] > nums[prev]) {
+            take = 1 + solve(ind + 1, ind, nums);
+        }
+
+        return max(take, notTake);
+    }
+
+    int lengthOfLIS(vector<int>& nums) {
+        return solve(0, -1, nums);
+    }
+};
+// Complexity
+// Time: O(2ⁿ)
+// Space: O(n) (recursion stack)
+
+// DP Memoization (Top-Down)
+class Solution {
+public:
+    int solve(int ind, int prev, vector<int>& nums,
+              vector<vector<int>>& dp) {
+
+        if(ind == nums.size()) return 0;
+
+        if(dp[ind][prev + 1] != -1)
+            return dp[ind][prev + 1]; 
+
+        int notTake = solve(ind + 1, prev, nums, dp);
+
+        int take = 0;
+        if(prev == -1 || nums[ind] > nums[prev]) {
+            take = 1 + solve(ind + 1, ind, nums, dp);
+        }
+
+        return dp[ind][prev + 1] = max(take, notTake);
+    }
+
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+
+        vector<vector<int>> dp(n, vector<int>(n + 1, -1)); 
+
+        return solve(0, -1, nums, dp);
+    }
+};
+// Complexity
+// Time: O(n²)
+// Space: O(n²) + O(n) recursion stack
+
+// DP Tabulation (Bottom-Up)
 class Solution {
 public:
     int lengthOfLIS(vector<int>& nums) {
-      int n=nums.size();
-      vector<int>dis(n,1);
+        int n = nums.size();
 
-      for(int i=n-1;i>=0;i--){
-        int d=dis[i];
-        for(int j=i+1;j<n;j++){
-          if(nums[i]<nums[j] && d < dis[i]+dis[j]){
-            d=dis[i]+dis[j];
-          }
+        vector<int> dp(n, 1);
+
+        int ans = 1;
+
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < i; j++) {
+                if(nums[j] < nums[i]) {
+                    dp[i] = max(dp[i], dp[j] + 1);
+                }
+            }
+            ans = max(ans, dp[i]);
         }
-        dis[i]=d;
-      }
 
-      int maxi=dis[0];
-      for(int i=1;i<n;i++){
-        maxi=max(maxi,dis[i]);
-      }
-      return maxi;
+        return ans;
     }
 };
-
-
-
-
-//tried logically but failed
-// class Solution {
-// public:
-//     int lengthOfLIS(vector<int>& nums) {
-//       int cnt=0;
-//       for(int i=0;i<nums.size()-1;i++){
-//         if(nums[i]>=nums[i+1])cnt++;
-//       }
-//       return nums.size()-cnt;
-//     }
-// };
+// Complexity
+// Time: O(n²)
+// Space: O(n)
