@@ -24,10 +24,10 @@ using namespace std;
 //         return dp[n][m]=1+min(mini(n-1,m-1,w1,w2,dp),min(mini(n-1,m,w1,w2,dp),mini(n,m-1,w1,w2,dp)));
 //     }
 //     int minDistance(string word1, string word2) {
-//         int m=word1.length();
-//         int n=word2.length();
-//         vector<vector<int>>dp(m,vector<int>(n,-1));
-//         return mini(m-1,n-1,word1,word2,dp);
+//         int n=word1.length();
+//         int m=word2.length();
+//         vector<vector<int>>dp(n,vector<int>(m,-1));
+//         return mini(n-1,m-1,word1,word2,dp);
 //     }
 // };
 
