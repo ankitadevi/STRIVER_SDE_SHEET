@@ -63,4 +63,5 @@ class Solution{
 }
 };
 
-
+// Memoization and tabulation both have O(N × M) time complexity because there are N × M unique states.
+// Memoization uses extra recursion stack space O(N + M), while tabulation avoids recursion and uses only O(N × M) space.
