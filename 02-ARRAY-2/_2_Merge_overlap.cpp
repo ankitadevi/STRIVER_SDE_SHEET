@@ -77,3 +77,11 @@ int main()
     cout << endl;
     return 0;
 }
+
+// Optimal:
+// TC: O(n log n)
+// SC: O(n)
+
+// Brute Force:
+// TC: O(n^2)
+// SC: O(n)
