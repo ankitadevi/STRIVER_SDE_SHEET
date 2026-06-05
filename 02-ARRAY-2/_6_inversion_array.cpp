@@ -5,98 +5,56 @@
 //leetcode:775 link: https://leetcode.com/problems/global-and-local-inversions/description/
 //gfg:count inversion  link:https://practice.geeksforgeeks.org/problems/inversion-of-array-1587115620/1?utm_source=geeksforgeeks&utm_medium=article_practice_tab&utm_campaign=article_practice_tab
 
+class Solution {
+public:
+    long long merge(vector<int>& nums, int low, int mid, int high) {
+        vector<int> temp;
+        int left = low;
+        int right = mid + 1;
+        long long cnt = 0;
 
-
-#include <iostream>
-#include<vector>
-using namespace std;
-
-int numberOfInversions(vector<int>&a, int n) {
-
-    // Count the number of pairs:
-    int cnt = 0;
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (a[i] > a[j]) cnt++;
+        while (left <= mid && right <= high) {
+            if (nums[left] <= nums[right]) {
+                temp.push_back(nums[left++]);
+            } else {
+                cnt += (mid - left + 1);
+                temp.push_back(nums[right++]);
+            }
         }
-    }
-    return cnt;
-}
 
-int main()
-{
-    vector<int> a = {5, 4, 3, 2, 1};
-    int n = 5;
-    int cnt = numberOfInversions(a, n);
-    cout << "The number of inversions is: "
-         << cnt << endl;
-    return 0;
-}
+        while (left <= mid) {
+            temp.push_back(nums[left++]);
+        }
 
+        while (right <= high) {
+            temp.push_back(nums[right++]);
+        }
 
-//not able to get the optimised solution:
-class Solution{
-  public:
-     long long count;
-    
-   
-void merge(long long v[],int l,int mid,int h)
-{
-    
-    long long i=l,j=mid+1;
-    vector<long long > vec;
-    
-    while(i<=mid && j<=h)
-    {
-        if(v[i]<=v[j])
-        {
-            vec.push_back(v[i]);
-            i++;
+        for (int i = low; i <= high; i++) {
+            nums[i] = temp[i - low];
         }
-        else{
-            count+=mid+1-i;
-            vec.push_back(v[j]);
-            j++;
-        }
+
+        return cnt;
     }
-    
-    while(i<=mid)
-    {
-        vec.push_back(v[i]);
-        i++;
+
+    long long mergeSort(vector<int>& nums, int low, int high) {
+        if (low >= high) return 0;
+
+        int mid = low + (high - low) / 2;
+
+        long long cnt = 0;
+
+        cnt += mergeSort(nums, low, mid);
+        cnt += mergeSort(nums, mid + 1, high);
+        cnt += merge(nums, low, mid, high);
+
+        return cnt;
     }
-    while(j<=h)
-    {
-        vec.push_back(v[j]);
-        j++;
-    }
-    
-    
-    for(int i=l;i<=h;i++)
-    {
-        v[i]=vec[i-l];
-    }
-}
-    
-    void mergeSort(long long arr[],int low,int high)
-    {
-        if(low<high)
-        {
-            long long mid=low+(high-low)/2;
-            mergeSort(arr,low,mid);
-            mergeSort(arr,mid+1,high);
-            merge(arr,low,mid,high);
-        }
-    }
-    
-    long long int inversionCount(long long arr[], long long N)
-    {
-        // Your Code Here
-       count=0;
-       
-        mergeSort(arr,0,N-1);
-    
-        return count;
-        
+
+    long long inversionCount(vector<int>& nums) {
+        return mergeSort(nums, 0, nums.size() - 1);
     }
 };
+
+// Time Complexity: O(n log n)
+// Space Complexity: O(n)
