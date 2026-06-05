@@ -3,35 +3,39 @@
 
 //Leetcode:50   link:https://leetcode.com/problems/powx-n/description/
 
-
 class Solution {
 public:
     double myPow(double x, int n) {
-        double ans = 1.0;
-        long long nn = n;
-        if (nn < 0) nn = -1 * nn;
-        while (nn) {
-            if (nn % 2) {
-                ans = ans * x;
-                nn = nn - 1;
-            } 
-            else {
-                x = x * x;
-                nn = nn / 2;
-            }
+        long long N = n;  // Handle INT_MIN
+
+        if (N < 0) {
+            x = 1.0 / x;
+            N = -N;
         }
-        if (n < 0) ans = (double)(1.0) / (double)(ans);
+
+        double ans = 1.0;
+
+        while (N > 0) {
+            if (N & 1) {      // If power is odd
+                ans *= x;
+            }
+            x *= x;           // Square the base
+            N >>= 1;          // Divide power by 2
+        }
+
         return ans;
-    
     }
 };
 
-
-//Bruteforce Approach
-double myPow(double x, int n) {
-      double ans = 1.0;
-      for (int i = 0; i < n; i++) {
-        ans = ans * x;
-      }
-      return ans;
-}
+// > ### Binary Exponentiation (Exponentiation by Squaring)
+// >
+// > - If `n` is even:
+// >   `xⁿ = (x²)ⁿᐟ²`
+// >
+// > - If `n` is odd:
+// >   `xⁿ = x · xⁿ⁻¹`
+// >
+// > - For negative powers:
+// >   `x⁻ⁿ = 1 / xⁿ`
+// >
+// > This reduces the time complexity from **O(n)** to **O(log n)** by repeatedly squaring the base and halving the exponent.
