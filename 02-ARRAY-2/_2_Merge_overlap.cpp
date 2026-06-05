@@ -85,3 +85,12 @@ int main()
 // Brute Force:
 // TC: O(n^2)
 // SC: O(n)
+
+// Time Complexity
+// Sorting: O(n log n)
+// Single traversal of intervals: O(n)
+// Total TC = O(n log n)
+// Space Complexity
+// ans stores merged intervals. In the worst case (no overlaps), it stores all n intervals.
+// SC = O(n)
+// If auxiliary space is asked (excluding output array), then it is O(1) apart from the sorting stack.
