@@ -30,6 +30,7 @@ public:
 // TC: O(n log n)
 // SC: O(1)
 
+// Floyd's Cycle Detection
 class Solution {
 public:
     int findDuplicate(vector<int>& nums) {
@@ -56,3 +57,6 @@ public:
 
 // TC : 0(n)
 // SC : 0(1)    
+
+// For interviews, Floyd's Cycle Detection is considered the optimal solution, 
+// while Binary Search on Answer is the best alternative that also satisfies all constraints.
