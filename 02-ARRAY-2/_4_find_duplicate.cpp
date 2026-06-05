@@ -3,73 +3,56 @@
 // Assuming there is only one duplicate number, your task is to find the duplicate number.
 //leetcode:287  link: https://leetcode.com/problems/find-the-duplicate-number/description/
 
-
-
-#include<iostream>
-using namespace std;
-#include<vector>
-
-
-
-//using frequency vector
+// binary search
 class Solution {
 public:
     int findDuplicate(vector<int>& nums) {
-        vector<int>freq(nums.size()+1,0);
-        for(int i=0;i<nums.size();i++){
-            if(freq[nums[i]]==0){
-                freq[nums[i]]+=1;
+        int low = 1, high = nums.size() - 1;
+
+        while(low < high) {
+            int mid = low + (high - low) / 2;
+
+            int count = 0;
+            for(int x : nums) {
+                if(x <= mid) count++;
             }
-            else{
-                return nums[i];
-            }
+
+            if(count > mid)
+                high = mid;
+            else
+                low = mid + 1;
         }
-        return 0;
+
+        return low;
     }
 };
 
+// TC: O(n log n)
+// SC: O(1)
 
-
-//using stl map
 class Solution {
 public:
     int findDuplicate(vector<int>& nums) {
-        map<int,int>m;
-        for(auto nu:nums){
-            m[nu]++;
+        int slow = nums[0];
+        int fast = nums[0];
+
+        // Find meeting point
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
+
+        // Find duplicate number
+        slow = nums[0];
+
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
         }
 
-        for(auto a:m){
-            if(a.second>1){
-                return a.first;
-            }
-        }
-
-        return nums[0];
+        return slow;
     }
 };
 
-
-
-
-//using sorting
-class Solution {
-public:
-    int findDuplicate(vector<int>& nums) {
-        int n = nums.size();
-        sort(nums.begin(), nums.end());
-        for (int i = 0; i < n - 1; i++) {
-            if (nums[i] == nums[i + 1]) {
-            return nums[i];
-            }
-        }
-        return 0;
-    }
-};
-
-
-int main() {
-  vector < int > array{2,5,8,3,5,88,34,55,12};
-  Solution* ans=new Solution();
-  cout << "The duplicate element is " << ans->findDuplicate(array) << endl;
-}
+// TC : 0(n)
+// SC : 0(1)    
