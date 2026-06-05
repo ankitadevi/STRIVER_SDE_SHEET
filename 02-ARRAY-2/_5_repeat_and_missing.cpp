@@ -7,46 +7,82 @@
 //Alternative 0n leetcode:
 //Leetcode:268   link:https://leetcode.com/problems/missing-number/description/
 
-
-#include<iostream>
-using namespace std;
-#include<vector>
-
-
-class Solution{
+class Solution {
 public:
-    vector<int> findTwoElement(vector<int> arr, int n) {
-        vector<int>ans;
-        vector<int>aa(n+1,-1);
-        
-        for(auto num:arr){
-            aa[num]++;
+    vector<int> findMissingRepeatingNumbers(vector<int> nums) {
+        long long n = nums.size();
+
+        long long actualSum = 0, actualSqSum = 0;
+        for (int x : nums) {
+            actualSum += x;
+            actualSqSum += 1LL * x * x;
         }
-        
-        int A;
-        int B;
-        for(int i=0;i<n+1;i++){
-            if(aa[i]==-1){
-                B=i;
-            }
-            if(aa[i]==1){
-                A=i;
-            }
-        }
-        ans.push_back(A);
-        ans.push_back(B);
-        return ans;
+
+        long long expectedSum = n * (n + 1) / 2;
+        long long expectedSqSum = n * (n + 1) * (2 * n + 1) / 6;
+
+        long long diff = actualSum - expectedSum; // A - B
+        long long sqDiff = actualSqSum - expectedSqSum; // A² - B²
+
+        long long sumAB = sqDiff / diff; // A + B
+
+        int A = (diff + sumAB) / 2;
+        int B = (sumAB - diff) / 2;
+
+        return {A, B};
     }
 };
 
+// tc:0(n)
+// sc:0(1)
+
+// ## Approach
+
+// Let:
+
+// - `A` = Repeating number
+// - `B` = Missing number
+
+// ### Step 1: Compute the difference of sums
+
+// ```
+// diff = sum(nums) - sum(1...n)
+//      = A - B
+// ```
+
+// ### Step 2: Compute the difference of squares
+
+// ```
+// sqDiff = sum(nums²) - sum((1...n)²)
+//        = A² - B²
+// ```
+
+// Using the identity:
+
+// ```
+// A² - B² = (A - B)(A + B)
+// ```
+
+// we get:
+
+// ```
+// A + B = sqDiff / diff
+// ```
+
+// ### Step 3: Solve the two equations
+
+// We now have:
+
+// ```
+// A - B = diff
+// A + B = sqDiff / diff
+// ```
+
+// Adding both equations:
+// A = ((A + B) + (A - B)) / 2
+
+// Subtracting the equations:
+// B = ((A + B) - (A - B)) / 2
 
 
-int main()
-{
-    vector<int> a = {3, 1, 2, 5, 4, 6, 7, 5};
-    Solution* answer=new Solution();
-    vector<int> ans = answer->findTwoElement(a,a.size());
-    cout << "The repeating and missing numbers are: {"<< ans[0] << ", " << ans[1] << "}\n";
-    return 0;
-}
 
