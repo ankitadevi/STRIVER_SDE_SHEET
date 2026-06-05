@@ -10,81 +10,26 @@
 //leetcode:88  link:https://leetcode.com/problems/merge-sorted-array/description/
 //gfg:Merge Without Extra Space
 
-
-#include<iostream>
-#include<vector>
-using namespace std;
-
-//using Brute force and extra space
 class Solution {
 public:
     void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-        vector<int>v;
-        int i=0;
-        int j=0;
-        while(i<m && j<n){
-            if(nums1[i]<nums2[j]){
-                v.push_back(nums1[i]);
-                i++;
-            }
-            else{
-                v.push_back(nums2[j]);
-                j++;
+        int i = m - 1;
+        int j = n - 1;
+        int k = m + n - 1;
+
+        while (i >= 0 && j >= 0) {
+            if (nums1[i] > nums2[j]) {
+                nums1[k--] = nums1[i--];
+            } else {
+                nums1[k--] = nums2[j--];
             }
         }
-        while(i<m){
-            v.push_back(nums1[i]);
-            i++;
+
+        while (j >= 0) {
+            nums1[k--] = nums2[j--];
         }
-        while(j<n){
-            v.push_back(nums2[j]);
-            j++;
-        }
-        nums1=v;
     }
 };
 
-
-// //using no extra space
-class Solution {
-public:
-    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-            int i=m-1;
-            int j=0;
-            vector
-            while(i>=0 && j<n){
-                if(nums1[i]<nums2[j]){
-                    break;
-                }
-                else{
-                    swap(nums1[i],nums2[j]);
-                    i--;
-                    j++;
-                }
-            }
-            sort(nums1.begin(),nums1.end());
-            sort(nums2.begin(),nums2.end());
-            nums.
-    }
-};
-
-
-
-//using stl function:
-// class Solution {
-// public:
-//     void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-//      vector<int>v;
-//      //v=nums2;
-
-//      for(int i=0;i<m;i++){
-//             v.push_back(nums1[i]);
-//      } 
-//      for(int j=0;j<n;j++){
-//             v.push_back(nums2[j]);
-//      } 
-//      sort(v.begin(),v.end());
-//      nums1=v;  
-
-//     }
-// };
+// Time Complexity: O(m + n)
+// Space Complexity: O(1) 
