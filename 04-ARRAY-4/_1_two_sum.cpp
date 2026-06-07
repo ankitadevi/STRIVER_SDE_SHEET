@@ -32,44 +32,19 @@ public:
 
 
         //////////////////////////////
-        //using hashmap
-        // unordered_map<int, int> map;
-        // for (int i = 0; i < nums.size(); i++) {
-        //     int num = nums[i];
-        //     int require = target - num;
-        //     if (map.find(require) != map.end()) {
-        //         return {map[require], i};
-        //     }
-        //     map[num] = i;
-        // }
-        // return {-1,-1};
-
-
-
-
-        //////////////////////////////
-        //using Two Pointer approach
-        // vector<int>answer;
-        vector<pair<int,int>>v;
-        for(int i=0;i<nums.size();i++){
-            v.push_back({nums[i],i});
-        }
-        sort(v.begin(),v.end());
-        int l=0;
-        int r=v.size()-1;
-        while(l<r){
-            if((v[l].first+v[r].first) ==target){
-                // answer.push_back(v[l].second);
-                // answer.push_back(v[r].second);
-                return {v[l].second ,v[r].second};
+        using hashmap
+        unordered_map<int, int> map;  //{val,idx}
+        for (int i = 0; i < nums.size(); i++) {
+            int num = nums[i];
+            int require = target - num;
+            if (map.find(require) != map.end()) {
+                return {map[require], i};
             }
-            else if((v[l].first+v[r].first) < target){
-                l++;
-            }
-            else{
-                r--;
-            }
+            map[num] = i;
         }
         return {-1,-1};
-    }
-};
+
+
+
+
+    
