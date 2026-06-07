@@ -51,43 +51,52 @@ public:
 
 
 
-        //optimised solution:
-        vector<int>v;
-        int ele1=INT_MIN;
-        int ele2=INT_MIN;
-        int c1=0;
-        int c2=0;
-        for(int i=0;i<nums.size();i++){
-            if(c1==0 && ele2!=nums[i]){
-                c1=1;
-                ele1=nums[i];
+    //optimised solution:
+    class Solution {
+    public:
+    vector<int> majorityElement(vector<int>& nums) {
+        int cnt1 = 0, cnt2 = 0;
+        int ele1 = INT_MIN, ele2 = INT_MIN;
+
+        // Find potential candidates
+        for (int num : nums) {
+            if (num == ele1) {
+                cnt1++;
             }
-            else if(c2==0 && ele1!=nums[i]){
-                c2=1;
-                ele2=nums[i];
+            else if (num == ele2) {
+                cnt2++;
             }
-            else if(nums[i]==ele1){
-                c1++;
+            else if (cnt1 == 0) {
+                ele1 = num;
+                cnt1 = 1;
             }
-            else if(nums[i]==ele2){
-                c2++;
+            else if (cnt2 == 0) {
+                ele2 = num;
+                cnt2 = 1;
             }
-            else{
-                c1--;
-                c2--;
+            else {
+                cnt1--;
+                cnt2--;
             }
-        }
-        
-        int col1=0;
-        int col2=0;
-        for(int i=0;i<nums.size();i++){
-            if(nums[i]==ele1){col1++;}
-            else if(nums[i]==ele2){col2++;}
         }
 
-        if(col1>=(nums.size()/3)+1){v.push_back(ele1);}
-        if(col2>=(nums.size()/3)+1){v.push_back(ele2);}
-        sort(v.begin(),v.end());
-        return v;
+        // Verify candidates
+        cnt1 = cnt2 = 0;
+
+        for (int num : nums) {
+            if (num == ele1) cnt1++;
+            else if (num == ele2) cnt2++;
+        }
+
+        vector<int> ans;
+        int n = nums.size();
+
+        if (cnt1 > n / 3) ans.push_back(ele1);
+        if (cnt2 > n / 3) ans.push_back(ele2);
+
+        return ans;
     }
 };
+
+// tc : O(n)
+// sc : O(1)
