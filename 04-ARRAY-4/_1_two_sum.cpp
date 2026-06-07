@@ -30,9 +30,12 @@ public:
         // return v1;
 
 
+// tc:0(n^2)
+// sc:0(1)
+
 
         //////////////////////////////
-        using hashmap
+        //using hashmap
         unordered_map<int, int> map;  //{val,idx}
         for (int i = 0; i < nums.size(); i++) {
             int num = nums[i];
@@ -44,7 +47,8 @@ public:
         }
         return {-1,-1};
 
-
+// tc:0(n)
+// sc:0(n)
 
 
     
