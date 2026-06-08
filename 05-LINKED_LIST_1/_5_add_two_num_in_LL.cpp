@@ -6,85 +6,79 @@
 
 //Leetcode:2  link: https://leetcode.com/problems/add-two-numbers/description/
 
-
-#include<iostream>
-using namespace std;
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
-
+// Brute-Force
 class Solution {
 public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
 
-        int carry=0;
-        ListNode* ans=new ListNode(-1);
-        ListNode* res=ans;
+        long long num1 = 0, num2 = 0;
+        long long place = 1;
 
-        while(l1 && l2){
-            int sum=l1->val + l2->val + carry;
-            ListNode* temp= new ListNode(sum%10);
-            ans->next=temp;
-            ans=ans->next;
-            carry=sum/10;
-            l1=l1->next;
-            l2=l2->next;
+        while (l1) {
+            num1 += l1->val * place;
+            place *= 10;
+            l1 = l1->next;
         }
 
-        while(l1){
-            int sum=l1->val + carry;
-            ListNode* temp= new ListNode(sum%10);
-            ans->next=temp;
-            ans=ans->next;
-            carry=sum/10;
-            l1=l1->next;
+        place = 1;
+
+        while (l2) {
+            num2 += l2->val * place;
+            place *= 10;
+            l2 = l2->next;
         }
 
-        while(l2){
-            int sum=l2->val + carry;
-            ListNode* temp= new ListNode(sum%10);
-            ans->next=temp;
-            ans=ans->next;
-            carry=sum/10;
-            l2=l2->next;
+        long long sum = num1 + num2;
+
+        if(sum == 0) return new ListNode(0);
+
+        ListNode* dummy = new ListNode(-1);
+        ListNode* tail = dummy;
+
+        while(sum){
+            tail->next = new ListNode(sum % 10);
+            tail = tail->next;
+            sum /= 10;
         }
 
-        if(carry>0){
-            ListNode* temp= new ListNode(carry);
-            ans->next=temp;
-            ans=ans->next;
-        }
-
-        return res->next;
-
-
-
-        //Reducing the above while loops 
-        ListNode *dummy = new ListNode(); 
-        ListNode *temp = dummy; 
-        int carry = 0;
-        while( (l1 != NULL || l2 != NULL) || carry) {
-            int sum = 0; 
-            if(l1 != NULL) {
-                sum += l1->val; 
-                l1 = l1 -> next; 
-            }
-            
-            if(l2 != NULL) {
-                sum += l2 -> val; 
-                l2 = l2 -> next; 
-            }
-            
-            sum += carry; 
-            carry = sum / 10; 
-            ListNode *node = new ListNode(sum % 10); 
-            temp -> next = node; 
-            temp = temp -> next; 
-        }
-        return dummy -> next; 
+        return dummy->next;
     }
 };
+// Time: O(n + m)
+// Space: O(max(n,m)
+
+// Optimal
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+
+        ListNode* dummy = new ListNode(-1);
+        ListNode* tail = dummy;
+
+        int carry = 0;
+
+        while(l1 || l2 || carry){
+
+            int sum = carry;
+
+            if(l1){
+                sum += l1->val;
+                l1 = l1->next;
+            }
+
+            if(l2){
+                sum += l2->val;
+                l2 = l2->next;
+            }
+
+            carry = sum / 10;
+
+            tail->next = new ListNode(sum % 10);
+            tail = tail->next;
+        }
+
+        return dummy->next;
+    }
+};
+// Time: O(max(n,m)
+// Space: O(max(n,m)
