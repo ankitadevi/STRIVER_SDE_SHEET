@@ -5,65 +5,70 @@
 
 //Leetcode:21   link: https://leetcode.com/problems/merge-two-sorted-lists/solutions/
 
-#include<iostream>
-using namespace std;
-struct ListNode {
-     int val;
-     ListNode *next;
-     ListNode() : val(0), next(nullptr) {}
-     ListNode(int x) : val(x), next(nullptr) {}
-     ListNode(int x, ListNode *next) : val(x), next(next) {}
+// A simple brute force approach is:
+
+// Traverse both linked lists.
+// Store all values in a vector.
+// Sort the vector.
+// Create a new linked list from the sorted values.
+// Brute Force C++ Solution
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        vector<int> nums;
+
+        while (list1) {
+            nums.push_back(list1->val);
+            list1 = list1->next;
+        }
+
+        while (list2) {
+            nums.push_back(list2->val);
+            list2 = list2->next;
+        }
+
+        sort(nums.begin(), nums.end());
+
+        ListNode* dummy = new ListNode(-1);
+        ListNode* tail = dummy;
+
+        for (int x : nums) {
+            tail->next = new ListNode(x);
+            tail = tail->next;
+        }
+
+        return dummy->next;
+    }
 };
- 
+
+// Time Complexity: O((n+m) log(n+m))
+
+// Space Complexity: O(n+m) (vector + new nodes)
 
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode* dummy = new ListNode(-1);
+        ListNode* tail = dummy;
 
-
-        if(list1 == NULL) return list2; 
-
-        if(list2 == NULL) return list1;
-
-        if(list1->val > list2->val) std::swap(list1,list2);
-
-        ListNode* res = list1;
-
-        while(list1 != NULL && list2 != NULL) {
- 
-            ListNode* temp = NULL;
-
-            while(list1 != NULL && list1->val <= list2->val) {
-
-                temp = list1;  
+        while (list1 && list2) {
+            if (list1->val <= list2->val) {
+                tail->next = list1;
                 list1 = list1->next;
+            } else {
+                tail->next = list2;
+                list2 = list2->next;
             }
 
-            temp->next = list2;
-            swap(list1,list2);
+            tail = tail->next;
         }
 
-        return res;
+        if (list1) tail->next = list1;
+        else tail->next = list2;
 
-
-        //using stl and vector
-        vector<int> vec;
-        while(list1) {
-            vec.push_back(list1->val);
-            list1=list1->next;
-        }
-        while(list2) {
-            vec.push_back(list2->val);
-            list2=list2->next;
-        }
-        sort(vec.begin(),vec.end());
-        ListNode* result=new ListNode(-1);
-        ListNode* temp=result;
-
-        for(int i=0; i<vec.size(); i++) {
-            result->next=new ListNode(vec[i]);
-            result=result->next;
-        }
-        return temp->next;
+        return dummy->next;
     }
 };
+
+// tc : O(n+m)
+// sc : O(1)
