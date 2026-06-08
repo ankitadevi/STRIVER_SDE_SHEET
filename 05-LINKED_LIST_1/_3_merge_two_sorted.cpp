@@ -15,6 +15,8 @@
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        if(list1==NULL) return list2;
+        if(list2==NULL) return list1;
         vector<int> nums;
 
         while (list1) {
@@ -48,8 +50,8 @@ public:
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
-        if(list1.empty()) return list2;
-        if(list2.empty()) return list1;
+        if(list1==NULL) return list2;
+        if(list2==NULL) return list1;
         ListNode* dummy = new ListNode(-1);
         ListNode* tail = dummy;
 
