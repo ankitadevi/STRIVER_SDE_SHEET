@@ -1,36 +1,113 @@
-// Given a rod of length N inches and an array of prices, price[]. 
-//price[i] denotes the value of a piece of length i. 
-//Determine the maximum value obtainable by cutting up the rod and selling the pieces.
-// Note: Consider 1-based indexing.
+// recursion
+class Solution {
+public:
 
-//GFG: https://practice.geeksforgeeks.org/problems/rod-cutting0840/1?utm_source=geeksforgeeks&utm_medium=article_practice_tab&utm_campaign=article_practice_tab
+    int solve(int ind, int len, vector<int>& price) {
 
-#include<iostream>
-using namespace std;
-
-class Solution{
-    public:
-  
-    int cut(int ind,int n,int price[],vector<vector<int>>&dp){
-        if(ind == 0){
-            return n*price[0];
+        if(ind == 0) {
+            return len * price[0];
         }
-        
-        if(dp[ind][n]!=-1)return dp[ind][n];
-        
-        int no = 0 + cut(ind-1,n,price,dp);
-    
+
+        int notTake = solve(ind - 1, len, price);
+
         int take = INT_MIN;
-        int rodL = ind+1;
-        if(rodL <= n){
-            take = price[ind] + cut(ind,n-rodL,price,dp);
+        int rodLength = ind + 1;
+
+        if(rodLength <= len) {
+            take = price[ind] +
+                   solve(ind, len - rodLength, price);
         }
-        
-        return dp[ind][n]=max(no,take);
+
+        return max(take, notTake);
     }
-    
-    int cutRod(int price[], int n) {
-        vector<vector<int>>dp(n,vector<int>(n+1,-1));
-        return cut(n-1,n,price,dp);
+
+    int rodCutting(vector<int> price, int n) {
+
+        return solve(n - 1, n, price);
     }
 };
+// TC = Exponential
+// SC = O(n)
+
+// memo
+class Solution {
+public:
+
+    int solve(int ind,int len,vector<int>& price,vector<vector<int>>& dp) {
+
+        if(ind == 0) {
+            return len * price[0];
+        }
+
+        if(dp[ind][len] != -1) {
+            return dp[ind][len];
+        }
+
+        int notTake = solve(ind - 1,len,price,dp);
+
+        int take = INT_MIN;
+        int rodLength = ind + 1;
+
+        if(rodLength <= len) {
+
+            take = price[ind] +solve(ind,len - rodLength,price,dp);
+        }
+
+        return dp[ind][len] =
+               max(take, notTake);
+    }
+
+    int rodCutting(vector<int> price, int n) {
+
+        vector<vector<int>> dp(n,vector<int>(n + 1, -1));
+
+        return solve(n - 1,n,price,dp);
+    }
+};
+// TC = O(n²)
+// SC = O(n²) + O(n)
+
+// tab
+class Solution {
+public:
+
+    int rodCutting(vector<int> price, int n) {
+
+        vector<vector<int>> dp(
+            n,
+            vector<int>(n + 1, 0)
+        );
+
+        for(int len = 0; len <= n; len++) {
+            dp[0][len] = len * price[0];
+        }
+
+        for(int ind = 1; ind < n; ind++) {
+
+            int rodLength = ind + 1;
+
+            for(int len = 0; len <= n; len++) {
+
+                int notTake =
+                    dp[ind - 1][len];
+
+                int take = INT_MIN;
+
+                if(rodLength <= len) {
+
+                    take =
+                        price[ind]
+                        + dp[ind]
+                            [len - rodLength];
+                }
+
+                dp[ind][len] =
+                    max(take, notTake);
+            }
+        }
+
+        return dp[n - 1][n];
+    }
+};
+// TC = O(n²)
+// SC = O(n²)
