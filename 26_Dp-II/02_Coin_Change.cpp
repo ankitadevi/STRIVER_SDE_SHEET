@@ -1,68 +1,99 @@
-// You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
-
-// Return the number of combinations that make up that amount. If that amount of money cannot be made up by any combination of the coins, return 0.
-
-// You may assume that you have an infinite number of each kind of coin.
-
-// The answer is guaranteed to fit into a signed 32-bit integer.
-
-
-//leetcode: 518  link:https://leetcode.com/problems/coin-change-ii/
-
-#include<iostream>
-using namespace std;
-
+// recursion
 class Solution {
 public:
-    int change(int T, vector<int>& coins) {
-        vector<long> prev(T+1,0);
-        for(int i=0;i<=T;i++){
-           prev[i]=(i%coins[0]==0);
-        }
-    
-    for(int ind=1; ind<coins.size();ind++){
-        vector<long> cur(T+1,0);
-        for(int target=0;target<=T;target++){
-            long notTaken = prev[target];
-            
-            long taken = 0;
-            if(coins[ind]<=target)
-                taken = cur[target-coins[ind]];
-                
-            cur[target] = notTaken + taken;
-        }
-        prev = cur;
+    int solve(int i, int j, vector<vector<int>>& grid) {
+        
+        if(i == 0 && j == 0)
+            return grid[0][0];
+
+        if(i < 0 || j < 0)
+            return 1e9;
+
+        int up = grid[i][j] + solve(i - 1, j, grid);
+        int left = grid[i][j] + solve(i, j - 1, grid);
+
+        return min(up, left);
     }
-    
-    return prev[T];
+
+    int minPathSum(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+
+        return solve(m - 1, n - 1, grid);
     }
 };
+// Complexity
+// Time: O(2^(m+n))
+// Space: O(m+n) (recursion stack)
 
- 
+// memo
+class Solution {
+public:
+    int solve(int i, int j, vector<vector<int>>& grid,
+              vector<vector<int>>& dp) {
 
-    
-//Memoization
-// class Solution {
-// public:
+        if(i == 0 && j == 0)
+            return grid[0][0];
 
+        if(i < 0 || j < 0)
+            return 1e9;
 
-//     int coin(int ind,int amount,vector<int>coins,vector<vector<int>>&dp){
-//         if(ind==0){
-//             return (amount%coins[0]==0);
-//         }
-//         if(dp[ind][amount]!=-1)return dp[ind][amount];
+        if(dp[i][j] != -1)
+            return dp[i][j];
 
-//         int notake=coin(ind-1,amount,coins,dp);
-//         int take=0;
-//         if(amount>=coins[ind]){
-//             take=coin(ind,amount-coins[ind],coins,dp);
-//         }
+        int up = grid[i][j] + solve(i - 1, j, grid, dp);
+        int left = grid[i][j] + solve(i, j - 1, grid, dp);
 
-//         return dp[ind][amount]=take+notake ;
-//     }
+        return dp[i][j] = min(up, left);
+    }
 
-//     int change(int amount, vector<int>& coins) {
-//         vector<vector<int>>dp(coins.size(),vector<int>(amount+1,-1));
-//         return coin(coins.size()-1,amount,coins,dp);
-//     }
-// };
+    int minPathSum(vector<vector<int>>& grid) {
+
+        int m = grid.size();
+        int n = grid[0].size();
+
+        vector<vector<int>> dp(m, vector<int>(n, -1));
+
+        return solve(m - 1, n - 1, grid, dp);
+    }
+};
+// Time: O(m*n)
+// Space: O(m*n) + O(m+n)
+
+// tab
+class Solution {
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+
+        int m = grid.size();
+        int n = grid[0].size();
+
+        vector<vector<int>> dp(m, vector<int>(n, 0));
+
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+
+                if(i == 0 && j == 0) {
+                    dp[i][j] = grid[i][j];
+                    continue;
+                }
+
+                int up = 1e9;
+                int left = 1e9;
+
+                if(i > 0)
+                    up = grid[i][j] + dp[i - 1][j];
+
+                if(j > 0)
+                    left = grid[i][j] + dp[i][j - 1];
+
+                dp[i][j] = min(up, left);
+            }
+        }
+
+        return dp[m - 1][n - 1];
+    }
+};
+// Complexity
+// Time: O(m*n)
+// Space: O(m*n)
