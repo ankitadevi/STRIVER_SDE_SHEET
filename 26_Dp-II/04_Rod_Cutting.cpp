@@ -4,18 +4,23 @@ public:
 
     int solve(int ind, int len, vector<int>& price) {
 
-        if(ind == 0) {
-            return len * price[0];
-        }
+        int n = price.size();
 
-        int notTake = solve(ind - 1, len, price);
+        if(ind == n)
+            return 0;
 
-        int take = INT_MIN;
+        int notTake = solve(ind + 1, len, price);
+
+        int take = 0;
+
         int rodLength = ind + 1;
 
         if(rodLength <= len) {
+
             take = price[ind] +
-                   solve(ind, len - rodLength, price);
+                   solve(ind,
+                         len - rodLength,
+                         price);
         }
 
         return max(take, notTake);
@@ -23,7 +28,7 @@ public:
 
     int rodCutting(vector<int> price, int n) {
 
-        return solve(n - 1, n, price);
+        return solve(0, n, price);
     }
 };
 // TC = Exponential
@@ -33,24 +38,33 @@ public:
 class Solution {
 public:
 
-    int solve(int ind,int len,vector<int>& price,vector<vector<int>>& dp) {
+    int solve(int ind,
+              int len,
+              vector<int>& price,
+              vector<vector<int>>& dp) {
 
-        if(ind == 0) {
-            return len * price[0];
-        }
+        int n = price.size();
 
-        if(dp[ind][len] != -1) {
+        if(ind == n)
+            return 0;
+
+        if(dp[ind][len] != -1)
             return dp[ind][len];
-        }
 
-        int notTake = solve(ind - 1,len,price,dp);
+        int notTake =
+            solve(ind + 1, len, price, dp);
 
-        int take = INT_MIN;
+        int take = 0;
+
         int rodLength = ind + 1;
 
         if(rodLength <= len) {
 
-            take = price[ind] +solve(ind,len - rodLength,price,dp);
+            take = price[ind] +
+                   solve(ind,
+                         len - rodLength,
+                         price,
+                         dp);
         }
 
         return dp[ind][len] =
@@ -59,9 +73,12 @@ public:
 
     int rodCutting(vector<int> price, int n) {
 
-        vector<vector<int>> dp(n,vector<int>(n + 1, -1));
+        vector<vector<int>> dp(
+            n,
+            vector<int>(n + 1, -1)
+        );
 
-        return solve(n - 1,n,price,dp);
+        return solve(0, n, price, dp);
     }
 };
 // TC = O(n²)
@@ -74,24 +91,24 @@ public:
     int rodCutting(vector<int> price, int n) {
 
         vector<vector<int>> dp(
-            n,
+            n + 1,
             vector<int>(n + 1, 0)
         );
 
-        for(int len = 0; len <= n; len++) {
-            dp[0][len] = len * price[0];
-        }
-
-        for(int ind = 1; ind < n; ind++) {
+        for(int ind = n - 1;
+            ind >= 0;
+            ind--) {
 
             int rodLength = ind + 1;
 
-            for(int len = 0; len <= n; len++) {
+            for(int len = 0;
+                len <= n;
+                len++) {
 
                 int notTake =
-                    dp[ind - 1][len];
+                    dp[ind + 1][len];
 
-                int take = INT_MIN;
+                int take = 0;
 
                 if(rodLength <= len) {
 
@@ -106,7 +123,7 @@ public:
             }
         }
 
-        return dp[n - 1][n];
+        return dp[0][n];
     }
 };
 // TC = O(n²)
