@@ -49,7 +49,10 @@ public:
         int right = solve(i, j+1, grid, dp);
 
         return dp[i][j] = grid[i][j] + min(down, right);
-    }
+        }
+        // dp[i][j] = minimum cost from (i,j)
+        //    to reach destination
+    
 
     int minPathSum(vector<vector<int>>& grid) {
 
