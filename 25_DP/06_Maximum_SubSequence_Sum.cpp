@@ -1,62 +1,103 @@
-// Given an array of n positive integers. 
-//Find the sum of the maximum sum subsequence of the given array such that the integers in the 
-//subsequence are sorted in strictly increasing order i.e. a strictly increasing subsequence.
+// Recurrsion
+class Solution {
+public:
 
-// GFG: https://practice.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1
+    int solve(int i, int prev, vector<int>& arr, int n) {
 
-#include<iostream>
-using namespace std;
+        if(i == n) return 0;
 
-class Solution{
+        int notTake = solve(i + 1, prev, arr, n);
 
-        //Tabulation DP
-	public:
-	int maxSumIS(int arr[], int n)  
-	{  
-	    int dp[n];
-	    
-	    for(int i=0;i<n;i++){
-	        dp[i]=arr[i];
-	    }
-	    
-	    for(int i=1;i<n;i++){
-	        for(int j=0;j<i;j++){
-	            if(arr[j]<arr[i]){
-	                if(dp[i]< arr[i]+dp[j]){
-	                    dp[i]=arr[i]+dp[j];
-	                }
-	            }
-	        }
-	    }
-	    
-	    int maxi=INT_MIN;
-	    for(int i=0;i<n;i++){
-	        maxi=max(maxi,dp[i]);
-	    }
-	    
-	    return maxi;
-	}  
-	
-	
-	
-//TLE
-// 	int maximum(int ind,int arr[],int maxi,int sum){
-// 	    if(ind<0){
-// 	        return sum;
-// 	    }
-	    
-// 	    int take=0;
-// 	    int no_take=0;
-// 	    if(arr[ind]<maxi){
-// 	        take=maximum(ind-1,arr,arr[ind],sum+arr[ind]);
-// 	    }
-// 	    no_take=maximum(ind-1,arr,maxi,sum);
-	    
-// 	    return max(take,no_take);
-// 	}
-// 	int maxSumIS(int arr[], int n)  
-// 	{  
-// 	    return maximum(n-1,arr,INT_MAX,0);
-// 	}  
+        int take = 0;
 
+        if(prev == -1 || arr[i] > arr[prev]) {
+            take = arr[i] + solve(i + 1, i, arr, n);
+        }
+
+        return max(take, notTake);
+    }
+
+    int maxSumIncreasingSubsequence(vector<int>& arr, int n) {
+
+        return solve(0, -1, arr, n);
+    }
 };
+// TC = O(2^n)
+// SC = O(n)
+
+// memo
+class Solution {
+public:
+
+    int solve(int i,
+              int prev,
+              vector<int>& arr,
+              int n,
+              vector<vector<int>>& dp) {
+
+        if(i == n) return 0;
+
+        if(dp[i][prev + 1] != -1)
+            return dp[i][prev + 1];
+
+        int notTake = solve(i + 1, prev, arr, n, dp);
+
+        int take = 0;
+
+        if(prev == -1 || arr[i] > arr[prev]) {
+            take = arr[i] +
+                   solve(i + 1, i, arr, n, dp);
+        }
+
+        return dp[i][prev + 1] =
+               max(take, notTake);
+    }
+
+    int maxSumIncreasingSubsequence(vector<int>& arr, int n) {
+
+        vector<vector<int>> dp(
+            n,
+            vector<int>(n + 1, -1)
+        );
+
+        return solve(0, -1, arr, n, dp);
+    }
+};
+// TC = O(n²)
+// SC = O(n²) + O(n)
+
+// Tab
+class Solution {
+public:
+
+    int maxSumIncreasingSubsequence(vector<int>& arr, int n) {
+
+        vector<int> dp(n);
+
+        for(int i = 0; i < n; i++) {
+            dp[i] = arr[i];
+        }
+
+        int ans = arr[0];
+
+        for(int i = 0; i < n; i++) {
+
+            for(int prev = 0; prev < i; prev++) {
+
+                if(arr[prev] < arr[i]) {
+
+                    dp[i] = max(
+                        dp[i],
+                        arr[i] + dp[prev]
+                    );
+                }
+            }
+
+            ans = max(ans, dp[i]);
+        }
+
+        return ans;
+    }
+};
+// TC = O(n²)
+// SC = O(n)
