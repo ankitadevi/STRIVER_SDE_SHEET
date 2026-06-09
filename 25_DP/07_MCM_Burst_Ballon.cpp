@@ -1,71 +1,110 @@
-// You are given n balloons, indexed from 0 to n - 1. Each balloon is painted with a number on it represented by an array nums. You are asked to burst all the balloons.
-
-// If you burst the ith balloon, you will get nums[i - 1] * nums[i] * nums[i + 1] coins. If i - 1 or i + 1 goes out of bounds of the array, then treat it as if there is a balloon with a 1 painted on it.
-
-// Return the maximum coins you can collect by bursting the balloons wisely.
-
-
-// Leetcode:312  link :: https://leetcode.com/problems/burst-balloons/description/
-
-
-#include<iostream>
-using namespace std;
-
-
-// Using Memoization
+// recurrsion
 class Solution {
 public:
 
-    int coins(int i,int j,vector<int>&nums,vector<vector<int>>&dp){
-        if(i>j)return 0;
+    int solve(int i, int j, vector<int>& nums){
 
-        if(dp[i][j]!=-1){return dp[i][j];}
+        if(i == j) return 0;
 
-        int coin=INT_MIN;
-        for(int k=i;k<=j;k++){
-            int cost= nums[i-1]*nums[k]*nums[j+1] + coins(i,k-1,nums,dp) +coins(k+1,j,nums,dp);
-            coin=max(coin,cost);
+        int mini = INT_MAX;
+
+        for(int k = i; k < j; k++){
+
+            int cost =
+                solve(i, k, nums)
+                + solve(k + 1, j, nums)
+                + nums[i - 1] * nums[k] * nums[j];
+
+            mini = min(mini, cost);
         }
 
-        return dp[i][j]=coin;
+        return mini;
     }
 
+    int matrixMultiplication(vector<int>& nums){
 
-    int maxCoins(vector<int>& nums) {
-        
-        int n=nums.size();
-        vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
-        nums.push_back(1);
-        nums.insert(nums.begin(),1);
-        return coins(1,n,nums,dp);
+        int n = nums.size();
+
+        return solve(1, n - 1, nums);
+    }
+// };
+// Time  : Exponential
+// Space : O(n) recursion stack
+
+// memo
+class Solution {
+public:
+
+    int solve(int i, int j,
+              vector<int>& nums,
+              vector<vector<int>>& dp){
+
+        if(i == j) return 0;
+
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        int mini = INT_MAX;
+
+        for(int k = i; k < j; k++){
+
+            int cost =
+                solve(i, k, nums, dp)
+                + solve(k + 1, j, nums, dp)
+                + nums[i - 1] * nums[k] * nums[j];
+
+            mini = min(mini, cost);
+        }
+
+        return dp[i][j] = mini;
+    }
+
+    int matrixMultiplication(vector<int>& nums){
+
+        int n = nums.size();
+
+        vector<vector<int>> dp(n,
+                               vector<int>(n, -1));
+
+        return solve(1, n - 1, nums, dp);
     }
 };
+// Time  = O(n³)
+// Space = O(n²) + O(n)
 
+// tab
+class Solution {
+public:
 
+    int matrixMultiplication(vector<int>& nums){
 
+        int n = nums.size();
 
-//Recursion
-// class Solution {
-// public:
+        vector<vector<int>> dp(n,
+                               vector<int>(n, 0));
 
-//     int coins(int i,int j,vector<int>&nums){
-//         if(i>j)return 0;
+        for(int i = n - 1; i >= 1; i--){
 
-//         int coin=INT_MIN;
-//         for(int k=i;k<=j;k++){
-//             int cost= nums[i-1]*nums[k]*nums[j+1] + coins(i,k-1,nums) +coins(k+1,j,nums);
-//             coin=max(coin,cost);
-//         }
+            for(int j = i + 1; j < n; j++){
 
-//         return coin;
-//     }
+                int mini = INT_MAX;
 
+                for(int k = i; k < j; k++){
 
-//     int maxCoins(vector<int>& nums) {
-//         int n=nums.size();
-//         nums.push_back(1);
-//         nums.insert(nums.begin(),1);
-//         return coins(1,n,nums);
-//     }
-// };
+                    int cost =
+                        dp[i][k]
+                        + dp[k + 1][j]
+                        + nums[i - 1] * nums[k] * nums[j];
 
+                    mini = min(mini, cost);
+                }
+
+                dp[i][j] = mini;
+            }
+        }
+
+        return dp[1][n - 1];
+    }
+};
+// Time  = O(n³)
+// Space = O(n²) 
