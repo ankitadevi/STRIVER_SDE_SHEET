@@ -3,11 +3,13 @@ class Solution {
 public:
     int solve(int idx, int amount, vector<int>& coins) {
 
-        if(idx == 0) {
-            return (amount % coins[0] == 0);
+        int n = coins.size();
+
+        if(idx == n - 1) {
+            return (amount % coins[idx] == 0);
         }
 
-        int notTake = solve(idx - 1, amount, coins);
+        int notTake = solve(idx + 1, amount, coins);
 
         int take = 0;
         if(coins[idx] <= amount)
@@ -17,26 +19,27 @@ public:
     }
 
     int change(int amount, vector<int>& coins) {
-        int n = coins.size();
-        return solve(n - 1, amount, coins);
+        return solve(0, amount, coins);
     }
 };
 
-// memo
+// memoization
 class Solution {
 public:
     int solve(int idx, int amount,
               vector<int>& coins,
               vector<vector<int>>& dp) {
 
-        if(idx == 0) {
-            return (amount % coins[0] == 0);
+        int n = coins.size();
+
+        if(idx == n - 1) {
+            return (amount % coins[idx] == 0);
         }
 
         if(dp[idx][amount] != -1)
             return dp[idx][amount];
 
-        int notTake = solve(idx - 1, amount, coins, dp);
+        int notTake = solve(idx + 1, amount, coins, dp);
 
         int take = 0;
         if(coins[idx] <= amount)
@@ -52,30 +55,30 @@ public:
         vector<vector<int>> dp(n,
                                vector<int>(amount + 1, -1));
 
-        return solve(n - 1, amount, coins, dp);
+        return solve(0, amount, coins, dp);
     }
 };
 
-// tab
+// tabulation
 class Solution {
 public:
     int change(int amount, vector<int>& coins) {
 
         int n = coins.size();
 
-        vector<vector<int>> dp(n,
-                               vector<int>(amount + 1, 0));
+        vector<vector<int>> dp(n, vector<int>(amount + 1, 0));
 
+        // Base case: idx == n-1
         for(int amt = 0; amt <= amount; amt++) {
-            if(amt % coins[0] == 0)
-                dp[0][amt] = 1;
+            if(amt % coins[n - 1] == 0)
+                dp[n - 1][amt] = 1;
         }
 
-        for(int idx = 1; idx < n; idx++) {
+        for(int idx = n - 2; idx >= 0; idx--) {
 
             for(int amt = 0; amt <= amount; amt++) {
 
-                int notTake = dp[idx - 1][amt];
+                int notTake = dp[idx + 1][amt];
 
                 int take = 0;
                 if(coins[idx] <= amt)
@@ -85,7 +88,7 @@ public:
             }
         }
 
-        return dp[n - 1][amount];
+        return dp[0][amount];
     }
 };
 
