@@ -90,9 +90,10 @@ public:
     }
 };
 
-// | Approach        | Time Complexity      | Space Complexity            |
-// | --------------- | -------------------- | --------------------------- |
-// | Recursion       | (O(2^n))             | (O(n))                      |
-// | Memoization     | (O(n \times target)) | (O(n \times target) + O(n)) |
-// | Tabulation      | (O(n \times target)) | (O(n \times target))        |
-// | Space Optimized | (O(n \times target)) | (O(target))                 |
+| Approach        | Time Complexity      | Space Complexity            |
+| --------------- | -------------------- | --------------------------- |
+| Recursion       | (O(2^n))             | (O(n))                      |
+| Memoization     | (O(n*target))        | (O(n*target) + O(n))        |
+| Tabulation      | (O(n*target))        | (O(n*target))               |
+| Space Optimized | (O(n*target))        | (O(target))                 |
+
