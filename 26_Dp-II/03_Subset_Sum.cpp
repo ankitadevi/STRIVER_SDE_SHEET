@@ -1,80 +1,98 @@
-// Given an integer array nums, return true if you can partition the array into two subsets such that 
-//the sum of the elements in both subsets is equal or false otherwise.
-
-
-//Leetcode: 416  link:https://leetcode.com/problems/partition-equal-subset-sum/
-
-
-#include<iostream>
-using namespace std;
-
-
-//Memoization
+// recursion
 class Solution {
 public:
+    bool solve(int idx, int target, vector<int>& arr) {
 
-    bool can(int ind,vector<int>&nums,int tar,vector<vector<int>>&dp){
-        if(ind<0){
-            return false;
-        }
-        if(tar==0){
-            return true;
-        }
+        // Target achieved
+        if(target == 0) return true;
 
-        if(dp[ind][tar]!= -1)return dp[ind][tar];
+        // Reached end of array
+        if(idx == arr.size()) return false;
 
-        bool notake=can(ind-1,nums,tar,dp);
-        bool take=false;
+        bool notTake = solve(idx + 1, target, arr);
 
-        if((tar-nums[ind])>=0){
-            take=can(ind-1,nums,tar-nums[ind],dp);
-        }
+        bool take = false;
+        if(arr[idx] <= target)
+            take = solve(idx + 1, target - arr[idx], arr);
 
-        return dp[ind][tar]=(notake || take);
+        return take || notTake;
     }
 
-    bool canPartition(vector<int>& nums) {
-        int n=nums.size();
-        int tar=0;
+    bool isSubsetSum(vector<int> arr, int target) {
+        return solve(0, target, arr);
+    }
+};
+// memo
+class Solution {
+public:
+    bool solve(int idx, int target,
+               vector<int>& arr,
+               vector<vector<int>>& dp) {
 
-        for(int i=0;i<n;i++){
-            tar+=nums[i];
+        if(target == 0) return true;
+
+        if(idx == arr.size()) return false;
+
+        if(dp[idx][target] != -1)
+            return dp[idx][target];
+
+        bool notTake = solve(idx + 1, target, arr, dp);
+
+        bool take = false;
+        if(arr[idx] <= target)
+            take = solve(idx + 1, target - arr[idx], arr, dp);
+
+        return dp[idx][target] = take || notTake;
+    }
+
+    bool isSubsetSum(vector<int> arr, int target) {
+
+        int n = arr.size();
+
+        vector<vector<int>> dp(
+            n, vector<int>(target + 1, -1));
+
+        return solve(0, target, arr, dp);
+    }
+};
+// tab
+class Solution {
+public:
+    bool isSubsetSum(vector<int> arr, int target) {
+
+        int n = arr.size();
+
+        vector<vector<bool>> dp(
+            n, vector<bool>(target + 1, false));
+
+        for(int i = 0; i < n; i++)
+            dp[i][0] = true;
+
+        if(arr[0] <= target)
+            dp[0][arr[0]] = true;
+
+        for(int i = 1; i < n; i++) {
+
+            for(int t = 1; t <= target; t++) {
+
+                bool notTake = dp[i - 1][t];
+
+                bool take = false;
+
+                if(arr[i] <= t)
+                    take = dp[i - 1][t - arr[i]];
+
+                dp[i][t] = take || notTake;
+            }
         }
 
-        if(tar%2 != 0)return false;
-
-        tar/=2;
-        vector<vector<int>>dp(n,vector<int>(tar+1,-1));
-
-        return can(n-1,nums,tar,dp);
+        return dp[n - 1][target];
     }
 };
 
-
-
-
-//Recursion
-// class Solution {
-// public:
-
-//     bool can(int ind,vector<int>&nums,int tar,int sum){
-//         if(ind<0){
-//             return false;
-//         }
-//         if(tar==sum){
-//             return true;
-//         }
-
-//         bool notake=can(ind-1,nums,tar,sum);
-//         bool take=can(ind-1,nums,tar-nums[ind],sum+nums[ind]);
-//         return (notake || take);
-//     }
-//     bool canPartition(vector<int>& nums) {
-//         int sum=0;
-//         for(int i=0;i<nums.size();i++){
-//             sum+=nums[i];
-//         }
-
-//         return can(nums.size()-1,nums,sum,0);
-//     }
-// };
+// | Approach        | Time Complexity      | Space Complexity            |
+// | --------------- | -------------------- | --------------------------- |
+// | Recursion       | (O(2^n))             | (O(n))                      |
+// | Memoization     | (O(n \times target)) | (O(n \times target) + O(n)) |
+// | Tabulation      | (O(n \times target)) | (O(n \times target))        |
+// | Space Optimized | (O(n \times target)) | (O(target))                 |
