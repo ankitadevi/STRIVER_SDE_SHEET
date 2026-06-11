@@ -1,4 +1,5 @@
 // brute-force
+// For every node in list A, traverse the entire list B and check whether the node addresses are the same.
 class Solution {
 public:
     ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
