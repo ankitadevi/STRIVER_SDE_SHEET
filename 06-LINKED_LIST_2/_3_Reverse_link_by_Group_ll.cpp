@@ -5,75 +5,100 @@
 
 //Leetcode:25  link: https://leetcode.com/problems/reverse-nodes-in-k-group/description/
 
-
-
-#include<iostream>
-#include<stack>
-using namespace std;
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
-
-
-
+// brute-force
 class Solution {
 public:
-    //Using stack and using O(n)extra space
     ListNode* reverseKGroup(ListNode* head, int k) {
-        if(k==1 || head==NULL){return head;}
-        ListNode* l1=head;
-        while(l1){
-            stack<int>v;
-            int kk=k;
-            ListNode* temp=l1;
-            while(kk-- && temp){
-                v.push(temp->val);
-                temp=temp->next;
-            }
-            if(kk>=0){
-                break;
-            }
-            while(!v.empty()){
-                l1->val=v.top();
-                l1=l1->next;
-                v.pop();
-            }
+
+        vector<int> arr;
+
+        ListNode* temp = head;
+
+        while (temp) {
+            arr.push_back(temp->val);
+            temp = temp->next;
         }
+
+        int n = arr.size();
+
+        for (int i = 0; i + k <= n; i += k) {
+            reverse(arr.begin() + i, arr.begin() + i + k);
+        }
+
+        temp = head;
+        int idx = 0;
+
+        while (temp) {
+            temp->val = arr[idx++];
+            temp = temp->next;
+        }
+
         return head;
     }
+};
 
-    //Using no extra space
-    ListNode* reverseKGroup(ListNode* head,int k) {
-    if(head == NULL||head->next == NULL) return head;
-    int length=0;
-    ListNode* temp=head;
-    while(temp){
-        length++;
-        temp=temp->next;
-    }
-    ListNode* dummyHead = new ListNode(0);
-    dummyHead->next = head;
-    
-    ListNode* pre = dummyHead;
-    ListNode* cur;
-    ListNode* nex;
-    
-    while(length >= k) {
-        cur = pre->next;
-        nex = cur->next;
-        for(int i=1;i<k;i++) {
-            cur->next = nex->next;
-            nex->next = pre->next;
-            pre->next = nex;
-            nex = cur->next;
+// optimal
+class Solution {
+public:
+
+    ListNode* findKthNode(ListNode* temp, int k) {
+        k -= 1;
+
+        while (temp != NULL && k > 0) {
+            temp = temp->next;
+            k--;
         }
-        pre = cur;
-        length -= k;
+
+        return temp;
     }
-    return dummyHead->next;
+
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = NULL;
+        ListNode* curr = head;
+
+        while (curr) {
+            ListNode* front = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = front;
+        }
+
+        return prev;
+    }
+
+    ListNode* reverseKGroup(ListNode* head, int k) {
+
+        ListNode* temp = head;
+        ListNode* prevLast = NULL;
+
+        while (temp) {
+
+            ListNode* kthNode = findKthNode(temp, k);
+
+            if (kthNode == NULL) {
+                if (prevLast)
+                    prevLast->next = temp;
+                break;
+            }
+
+            ListNode* nextNode = kthNode->next;
+            kthNode->next = NULL;
+
+            ListNode* newHead = reverseList(temp);
+
+            if (temp == head) {
+                head = newHead;
+            } else {
+                prevLast->next = newHead;
+            }
+
+            prevLast = temp;
+            temp = nextNode;
+        }
+
+        return head;
     }
 };
+
+// Brute Force (vector)     : O(N) Time, O(N) Space
+// Optimal Iterative        : O(N) Time, O(1) Space
