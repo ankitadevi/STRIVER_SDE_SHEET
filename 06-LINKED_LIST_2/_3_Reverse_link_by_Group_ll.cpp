@@ -48,7 +48,7 @@ public:
 // Time Complexity: O(N)
 // Space Complexity: O(k) (or O(N) in worst case)
 
-// optimal 
+// Optimal 
 class Solution {
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
