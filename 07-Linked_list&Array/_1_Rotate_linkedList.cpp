@@ -1,66 +1,83 @@
-//Rotate Linked List
-// Given the head of a linked list, rotate the list to the right by k places.
-
-//Leetcode:61  link: https://leetcode.com/problems/rotate-list/description/
-
-
-#include<iostream>
-using namespace std;
-
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
-
+// Brute-Force
 class Solution {
 public:
-
-    //Optimist solution
-    ListNode* rotateRight(ListNode* head,int k) {
-    if(head == NULL||head->next == NULL||k == 0) return head;
-    ListNode* temp = head;
-    int length = 1;
-    while(temp->next != NULL) {
-        ++length;
-        temp = temp->next;
-    }
-    temp->next = head;
-    k = k%length;
-    int end = length-k;
-    while(end--) temp = temp->next;
-    head = temp->next;
-    temp->next = NULL;
-    return head;
-}
-
-
-
-
-    //MY first approach:
-    //it went right but something complex 😂
     ListNode* rotateRight(ListNode* head, int k) {
-        if(head==NULL || k==0){return head;}
-        ListNode* temp=head;
-        int size=0;
-        while(temp){temp=temp->next; size++;}
-        k=k%size;
-        if(k==0){return head;}
-        int t=size-k;
-        temp=head;
-        while(--t){
-            temp=temp->next;
+
+        if(head == NULL || head->next == NULL || k == 0)
+            return head;
+
+        int len = 0;
+        ListNode* temp = head;
+
+        while(temp){
+            len++;
+            temp = temp->next;
         }
-        ListNode* pre=temp->next;
-        temp->next=NULL;
-        ListNode* curr=pre;
-        while(curr->next!=NULL){
-            curr=curr->next;
+
+        k = k % len;
+
+        while(k--){
+
+            ListNode* prev = NULL;
+            ListNode* curr = head;
+
+            while(curr->next){
+                prev = curr;
+                curr = curr->next;
+            }
+
+            // curr = last node
+            // prev = second last node
+
+            prev->next = NULL;
+            curr->next = head;
+            head = curr;
         }
-        curr->next=head;
-        head=pre;
+
         return head;
     }
 };
+// Time: O(N × K)
+// Space: O(1)
+
+// Optimal
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+
+        if(head == NULL || head->next == NULL || k == 0)
+            return head;
+
+        int len = 1;
+        ListNode* tail = head;
+
+        while(tail->next){
+            tail = tail->next;
+            len++;
+        }
+
+        k = k % len;
+
+        if(k == 0)
+            return head;
+
+        // Make circular list
+        tail->next = head;
+
+        int steps = len - k;
+
+        ListNode* newTail = head;
+
+        for(int i = 1; i < steps; i++){
+            newTail = newTail->next;
+        }
+
+        ListNode* newHead = newTail->next;
+
+        newTail->next = NULL;
+
+        return newHead;
+    }
+};
+// Time: O(N)
+// Space: O(1)
