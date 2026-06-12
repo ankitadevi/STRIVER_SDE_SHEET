@@ -1,104 +1,87 @@
-// Reverse Linked List in groups of Size K
-// Problem Statement: Given the head of a linked list, reverse the nodes of the list k at a time, 
-// and return the modified list. k is a positive integer and is less than or equal to the length of the 
-// linked list. If the number of nodes is not a multiple of k then left-out nodes, in the end, should remain as it is.
-
-//Leetcode:25  link: https://leetcode.com/problems/reverse-nodes-in-k-group/description/
-
-// brute-force
+// Brute-force
 class Solution {
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
+        if (!head || k == 1) return head;
 
-        vector<int> arr;
-
-        ListNode* temp = head;
-
-        while (temp) {
-            arr.push_back(temp->val);
-            temp = temp->next;
-        }
-
-        int n = arr.size();
-
-        for (int i = 0; i + k <= n; i += k) {
-            reverse(arr.begin() + i, arr.begin() + i + k);
-        }
-
-        temp = head;
-        int idx = 0;
-
-        while (temp) {
-            temp->val = arr[idx++];
-            temp = temp->next;
-        }
-
-        return head;
-    }
-};
-
-// optimal
-class Solution {
-public:
-
-    ListNode* findKthNode(ListNode* temp, int k) {
-        k -= 1;
-
-        while (temp != NULL && k > 0) {
-            temp = temp->next;
-            k--;
-        }
-
-        return temp;
-    }
-
-    ListNode* reverseList(ListNode* head) {
-        ListNode* prev = NULL;
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
         ListNode* curr = head;
 
         while (curr) {
-            ListNode* front = curr->next;
-            curr->next = prev;
-            prev = curr;
-            curr = front;
-        }
+            stack<ListNode*> st;
+            ListNode* temp = curr;
+            int cnt = 0;
 
-        return prev;
-    }
+            while (temp && cnt < k) {
+                st.push(temp);
+                temp = temp->next;
+                cnt++;
+            }
 
-    ListNode* reverseKGroup(ListNode* head, int k) {
-
-        ListNode* temp = head;
-        ListNode* prevLast = NULL;
-
-        while (temp) {
-
-            ListNode* kthNode = findKthNode(temp, k);
-
-            if (kthNode == NULL) {
-                if (prevLast)
-                    prevLast->next = temp;
+            if (cnt < k) {
+                tail->next = curr;
                 break;
             }
 
-            ListNode* nextNode = kthNode->next;
-            kthNode->next = NULL;
-
-            ListNode* newHead = reverseList(temp);
-
-            if (temp == head) {
-                head = newHead;
-            } else {
-                prevLast->next = newHead;
+            while (!st.empty()) {
+                tail->next = st.top();
+                st.pop();
+                tail = tail->next;
             }
 
-            prevLast = temp;
-            temp = nextNode;
+            tail->next = temp;
+            curr = temp;
         }
 
-        return head;
+        return dummy.next;
     }
 };
+// Time Complexity: O(N)
+// Space Complexity: O(k) (or O(N) in worst case)
 
-// Brute Force (vector)     : O(N) Time, O(N) Space
-// Optimal Iterative        : O(N) Time, O(1) Space
+// optimal 
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (!head || k == 1) return head;
+
+        ListNode dummy(0);
+        dummy.next = head;
+
+        ListNode* prevGroup = &dummy;
+
+        while (true) {
+            ListNode* kth = prevGroup;
+
+            // Find kth node
+            for (int i = 0; i < k && kth; i++) {
+                kth = kth->next;
+            }
+
+            if (!kth) break;
+
+            ListNode* groupNext = kth->next;
+
+            // Reverse current group
+            ListNode* prev = groupNext;
+            ListNode* curr = prevGroup->next;
+
+            while (curr != groupNext) {
+                ListNode* nxt = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = nxt;
+            }
+
+            ListNode* temp = prevGroup->next;
+
+            prevGroup->next = kth;
+            prevGroup = temp;
+        }
+
+        return dummy.next;
+    }
+};
+// Time Complexity: O(N)
+// Space Complexity: O(1)
