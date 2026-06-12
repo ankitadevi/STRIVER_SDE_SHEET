@@ -2,29 +2,34 @@
 class Solution {
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
-        if (!head || k == 1) return head;
 
-        ListNode dummy(0);
-        ListNode* tail = &dummy;
+        if(!head || k==1) return head;
+
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+
+        ListNode* tail = dummy;
         ListNode* curr = head;
 
-        while (curr) {
+        while(curr){
+
             stack<ListNode*> st;
+
             ListNode* temp = curr;
             int cnt = 0;
 
-            while (temp && cnt < k) {
+            while(temp && cnt < k){
                 st.push(temp);
                 temp = temp->next;
                 cnt++;
             }
 
-            if (cnt < k) {
+            if(cnt < k){
                 tail->next = curr;
                 break;
             }
 
-            while (!st.empty()) {
+            while(!st.empty()){
                 tail->next = st.top();
                 st.pop();
                 tail = tail->next;
@@ -34,7 +39,10 @@ public:
             curr = temp;
         }
 
-        return dummy.next;
+        ListNode* ans = dummy->next;
+        delete dummy;
+
+        return ans;
     }
 };
 // Time Complexity: O(N)
@@ -44,32 +52,35 @@ public:
 class Solution {
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
-        if (!head || k == 1) return head;
 
-        ListNode dummy(0);
-        dummy.next = head;
+        if(!head || k==1) return head;
 
-        ListNode* prevGroup = &dummy;
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
 
-        while (true) {
+        ListNode* prevGroup = dummy;
+
+        while(true){
+
             ListNode* kth = prevGroup;
 
-            // Find kth node
-            for (int i = 0; i < k && kth; i++) {
+            for(int i=0;i<k && kth;i++){
                 kth = kth->next;
             }
 
-            if (!kth) break;
+            if(!kth) break;
 
             ListNode* groupNext = kth->next;
 
-            // Reverse current group
             ListNode* prev = groupNext;
             ListNode* curr = prevGroup->next;
 
-            while (curr != groupNext) {
+            while(curr != groupNext){
+
                 ListNode* nxt = curr->next;
+
                 curr->next = prev;
+
                 prev = curr;
                 curr = nxt;
             }
@@ -77,10 +88,14 @@ public:
             ListNode* temp = prevGroup->next;
 
             prevGroup->next = kth;
+
             prevGroup = temp;
         }
 
-        return dummy.next;
+        ListNode* ans = dummy->next;
+        delete dummy;
+
+        return ans;
     }
 };
 // Time Complexity: O(N)
